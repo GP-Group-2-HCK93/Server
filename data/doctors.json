@@ -1,0 +1,42 @@
+[
+  {
+    "UserId": 2,
+    "specialization": "Cardiology",
+    "experience": 10,
+    "bio": "Experienced cardiologist specializing in heart disease prevention and treatment.",
+    "isAvailable": true,
+    "location": "Jakarta"
+  },
+  {
+    "UserId": 3,
+    "specialization": "Pediatrics",
+    "experience": 7,
+    "bio": "Dedicated pediatrician focused on child growth, nutrition, and immunization.",
+    "isAvailable": true,
+    "location": "Bandung"
+  },
+  {
+    "UserId": 4,
+    "specialization": "Dermatology",
+    "experience": 5,
+    "bio": "Dermatologist with expertise in skin care, acne treatment, and allergies.",
+    "isAvailable": false,
+    "location": "Surabaya"
+  },
+  {
+    "UserId": 5,
+    "specialization": "Neurology",
+    "experience": 12,
+    "bio": "Neurologist specializing in brain and nervous system disorders.",
+    "isAvailable": true,
+    "location": "Yogyakarta"
+  },
+  {
+    "UserId": 6,
+    "specialization": "General Practitioner",
+    "experience": 4,
+    "bio": "General doctor providing primary healthcare and routine medical checkups.",
+    "isAvailable": true,
+    "location": "Medan"
+  }
+]
