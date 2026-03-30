@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
-    senderRole: {type: DataTypes.ENUM,
+    senderRole: {type: DataTypes.ENUM ("User", "Doctor", "Admin"),
       allowNull: false,
       validate: {
         notEmpty: {
