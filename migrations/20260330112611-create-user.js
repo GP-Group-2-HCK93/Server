@@ -28,7 +28,7 @@ module.exports = {
         defaultValue: "User"
       },
       profilePic: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT, // ubah dari string ke text untuk menyimpan URL yang lebih panjang
         allowNull: true
       },
       createdAt: {
