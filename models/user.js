@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       User.hasOne(models.Doctor, {foreignKey: "UserId"})
       User.hasMany(models.ChatRoom, {foreignKey: "UserId"})
       User.hasMany(models.Notification, {foreignKey: "UserId"})
+      User.hasMany(models.Message, { foreignKey: "SenderId", as: "SentMessages" });
     }
   }
   User.init({
