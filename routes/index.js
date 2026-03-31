@@ -9,7 +9,7 @@ const bookingRoutes = require("./booking");
 router.use("/", authRoutes);
 
 router.use(authentication)
-router.use("/chats", chatRoutes)
+// router.use("/chats", chatRoutes)
 router.use("/ai", aiRoutes)
 
 router.use("/doctors", doctorRoutes);
