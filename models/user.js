@@ -74,14 +74,14 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
-    profilePic: {type: DataTypes.STRING,
+    profilePic: {type: DataTypes.TEXT, // diganti dari string ke text 
       allowNull: true,
-      validate: {
-        isUrl: {
-          args: true,
-          msg: "Image must be URL format"
-        }
-      }
+      // validate: {
+      //   isUrl: {
+      //     args: true,
+      //     msg: "Image must be URL format"
+      //   }
+      // }
     }
   }, {
     sequelize,
