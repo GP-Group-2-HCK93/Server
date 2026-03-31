@@ -26,29 +26,26 @@ io.use((socket, next) => {
   next();
 });
 
+app.set("io", io);
+
 io.on("connection", (socket) => {
-  // console.log(socket.id);
+  console.log("✅ socket connected:", socket.id);
 
-  // socket.emit("hello", "world");
-
-  socket.on("add/count", (args) => {
-    socket.broadcast.emit("share/count", args);
-  });
-  socket.on("min/count", (args) => {
-    socket.broadcast.emit("share/count", args);
+  socket.on("room:join", ({ chatRoomId }) => {
+    if (!chatRoomId) return;
+    socket.join(`chat:${chatRoomId}`);
+    console.log(`📍 ${socket.id} joined chat:${chatRoomId}`);
   });
 
-  socket.on("msg/sent", (args) => {
-    const msg = String(args || "").trim();
-    if (!msg) return;
-
-    io.emit("msg/all", {
-      from: socket.data.username,
-      msg,
-    });
+  socket.on("room:leave", ({ chatRoomId }) => {
+    if (!chatRoomId) return;
+    socket.leave(`chat:${chatRoomId}`);
+    console.log(`🚪 ${socket.id} left chat:${chatRoomId}`);
   });
 
-  // ...
+  socket.on("disconnect", () => {
+    console.log("❌ socket disconnected:", socket.id);
+  });
 });
 
 app.use(cors());
