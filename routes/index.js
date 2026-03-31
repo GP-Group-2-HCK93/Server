@@ -3,7 +3,6 @@ const authentication = require("../middlewares/authentication")
 const authRoutes = require("./auths")
 const chatRoutes = require("./chats")
 const aiRoutes = require("./ai")
-const authRoutes = require("./auths");
 const doctorRoutes = require("./doctors");
 
 router.use("/", authRoutes);
