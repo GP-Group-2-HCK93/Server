@@ -1,4 +1,5 @@
 const { ChatRoom, Doctor, User } = require("../models");
+const { Op } = require("sequelize");
 
 class DoctorController {
   static async getAll(req, res, next) {
@@ -104,6 +105,18 @@ class DoctorController {
 
       await doctor.update({ isAvailable: nextAvailability });
 
+      const io = req.app.get("io");
+      if (io) {
+        io.emit("doctor/availability", {
+          doctorId: doctor.id,
+          userId: doctor.UserId,
+          doctorName: doctor.User?.name || null,
+          specialization: doctor.specialization,
+          isAvailable: doctor.isAvailable,
+          updatedAt: doctor.updatedAt,
+        });
+      }
+
       res.status(200).json({
         message: `Doctor is now ${doctor.isAvailable ? "available" : "unavailable"}`,
         isAvailable: doctor.isAvailable,
@@ -119,10 +132,86 @@ class DoctorController {
 
       const doctor = await DoctorController.getDoctorProfile(req.user.id);
 
-      const bookings = await ChatRoom.findAll({
+      const [bookings, recentDecisions] = await Promise.all([
+        ChatRoom.findAll({
+          where: {
+            DoctorId: doctor.id,
+            status: "Pending",
+          },
+          include: [
+            {
+              model: User,
+              attributes: ["id", "name", "email", "profilePic"],
+            },
+          ],
+          order: [["createdAt", "DESC"]],
+        }),
+        ChatRoom.findAll({
+          where: {
+            DoctorId: doctor.id,
+            status: {
+              [Op.in]: ["Accepted", "Rejected", "Closed"],
+            },
+          },
+          include: [
+            {
+              model: User,
+              attributes: ["id", "name", "email", "profilePic"],
+            },
+          ],
+          order: [["updatedAt", "DESC"]],
+          limit: 20,
+        }),
+      ]);
+
+      res.status(200).json({
+        total: bookings.length,
+        bookings: bookings.map((booking) => ({
+          id: booking.id,
+          status: booking.status,
+          createdAt: booking.createdAt,
+          updatedAt: booking.updatedAt,
+          patient: booking.User
+            ? {
+                id: booking.User.id,
+                name: booking.User.name,
+                email: booking.User.email,
+                profilePic: booking.User.profilePic,
+              }
+            : null,
+        })),
+        recentDecisions: recentDecisions.map((booking) => ({
+          id: booking.id,
+          status: booking.status,
+          createdAt: booking.createdAt,
+          updatedAt: booking.updatedAt,
+          patient: booking.User
+            ? {
+                id: booking.User.id,
+                name: booking.User.name,
+                email: booking.User.email,
+                profilePic: booking.User.profilePic,
+              }
+            : null,
+        })),
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getRecentDecisions(req, res, next) {
+    try {
+      DoctorController.ensureDoctorRole(req);
+
+      const doctor = await DoctorController.getDoctorProfile(req.user.id);
+
+      const decisions = await ChatRoom.findAll({
         where: {
           DoctorId: doctor.id,
-          status: "Pending",
+          status: {
+            [Op.in]: ["Accepted", "Rejected", "Closed"],
+          },
         },
         include: [
           {
@@ -130,12 +219,13 @@ class DoctorController {
             attributes: ["id", "name", "email", "profilePic"],
           },
         ],
-        order: [["createdAt", "DESC"]],
+        order: [["updatedAt", "DESC"]],
+        limit: 20,
       });
 
       res.status(200).json({
-        total: bookings.length,
-        bookings: bookings.map((booking) => ({
+        total: decisions.length,
+        decisions: decisions.map((booking) => ({
           id: booking.id,
           status: booking.status,
           createdAt: booking.createdAt,
@@ -218,6 +308,46 @@ class DoctorController {
 
       res.status(200).json({
         message: "Booking rejected",
+        booking: {
+          id: booking.id,
+          status: booking.status,
+          updatedAt: booking.updatedAt,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async closeBooking(req, res, next) {
+    try {
+      DoctorController.ensureDoctorRole(req);
+      const { chatRoomId } = req.params;
+
+      const doctor = await DoctorController.getDoctorProfile(req.user.id);
+
+      const booking = await ChatRoom.findOne({
+        where: {
+          id: chatRoomId,
+          DoctorId: doctor.id,
+        },
+      });
+
+      if (!booking) {
+        throw { name: "NotFound", message: "Booking not found" };
+      }
+
+      if (booking.status !== "Accepted") {
+        throw {
+          name: "BadRequest",
+          message: "Only accepted bookings can be closed",
+        };
+      }
+
+      await booking.update({ status: "Closed" });
+
+      res.status(200).json({
+        message: "Booking closed",
         booking: {
           id: booking.id,
           status: booking.status,

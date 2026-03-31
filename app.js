@@ -11,10 +11,11 @@ const { Server } = require("socket.io");
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "*",
+    origin: ["http://localhost:5173"],
     methods: ["GET", "POST"],
   },
 });
+app.set("io", io);
 
 io.use((socket, next) => {
   const username = socket.handshake.auth?.username;
