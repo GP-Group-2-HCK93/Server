@@ -5,7 +5,7 @@ const chatRoutes = require('./chats');
 const aiRoutes = require('./ai');
 const doctorRoutes = require('./doctors');
 const adminRoutes = require('./admin');
-const ProfileController = require('../controllers/profileController');
+const profileRoutes = require('./profile');
 
 router.use('/', authRoutes);
 
@@ -15,8 +15,7 @@ router.use('/ai', aiRoutes);
 
 router.use('/doctors', doctorRoutes);
 
-router.get('/profile', ProfileController.getProfile);
-router.put('/profile', ProfileController.updateProfile);
+router.use('/', profileRoutes);
 
 router.use('/', adminRoutes);
 router.use('/', doctorRoutes);
