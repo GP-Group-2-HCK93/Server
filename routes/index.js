@@ -4,7 +4,6 @@ const authRoutes = require("./auths")
 const chatRoutes = require("./chats")
 const aiRoutes = require("./ai")
 const doctorRoutes = require("./doctors");
-const chatRoutes = require("./chats");
 const bookingRoutes = require("./booking");
 
 router.use("/", authRoutes);

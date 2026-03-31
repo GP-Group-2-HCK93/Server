@@ -2,7 +2,6 @@ const DoctorController = require("../controllers/doctorController");
 const router = require("express").Router();
 
 router.get("/dashboard", DoctorController.dashboardDoc);
-// router.post("/dashboard", DoctorController.dashboardDoc);
 router.patch("/availability", DoctorController.toggleAvailability);
 router.get("/bookings/pending", DoctorController.getPendingBookings);
 router.get("/bookings/recent-decisions", DoctorController.getRecentDecisions);
