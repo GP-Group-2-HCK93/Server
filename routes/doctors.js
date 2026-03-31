@@ -1,11 +1,13 @@
-const doctorController = require("../controllers/doctorController");
+const DoctorController = require("../controllers/doctorController");
 const router = require("express").Router();
 
-router.get("/dashboard", doctorController.dashboardDoc);
-// router.post("/dashboard", doctorController.dashboardDoc);
-router.patch("/availability", doctorController.toggleAvailability);
-router.get("/bookings/pending", doctorController.getPendingBookings);
-router.patch("/bookings/:chatRoomId/approve", doctorController.approveBooking);
-router.patch("/bookings/:chatRoomId/reject", doctorController.rejectBooking);
+router.get("/dashboard", DoctorController.dashboardDoc);
+// router.post("/dashboard", DoctorController.dashboardDoc);
+router.patch("/availability", DoctorController.toggleAvailability);
+router.get("/bookings/pending", DoctorController.getPendingBookings);
+router.patch("/bookings/:chatRoomId/approve", DoctorController.approveBooking);
+router.patch("/bookings/:chatRoomId/reject", DoctorController.rejectBooking);
+router.get("/", DoctorController.getAll);
+
 
 module.exports = router;

@@ -1,6 +1,24 @@
 const { ChatRoom, Doctor, User } = require("../models");
 
 class DoctorController {
+  static async getAll(req, res, next) {
+    try {
+      const doctors = await Doctor.findAll({
+        where: {
+          isAvailable: true,
+        },
+        include: {
+          model: User,
+          attributes: ["name", "email", "profilePic"],
+        },
+      });
+
+      res.status(200).json(doctors);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async getDoctorProfile(userId) {
     const doctor = await Doctor.findOne({
       where: { UserId: userId },
@@ -29,18 +47,23 @@ class DoctorController {
 
       const doctor = await DoctorController.getDoctorProfile(req.user.id);
 
-      const [totalChats, pendingChats, acceptedChats, closedChats, totalPatients] =
-        await Promise.all([
-          ChatRoom.count({ where: { DoctorId: doctor.id } }),
-          ChatRoom.count({ where: { DoctorId: doctor.id, status: "Pending" } }),
-          ChatRoom.count({ where: { DoctorId: doctor.id, status: "Accepted" } }),
-          ChatRoom.count({ where: { DoctorId: doctor.id, status: "Closed" } }),
-          ChatRoom.count({
-            where: { DoctorId: doctor.id },
-            distinct: true,
-            col: "UserId",
-          }),
-        ]);
+      const [
+        totalChats,
+        pendingChats,
+        acceptedChats,
+        closedChats,
+        totalPatients,
+      ] = await Promise.all([
+        ChatRoom.count({ where: { DoctorId: doctor.id } }),
+        ChatRoom.count({ where: { DoctorId: doctor.id, status: "Pending" } }),
+        ChatRoom.count({ where: { DoctorId: doctor.id, status: "Accepted" } }),
+        ChatRoom.count({ where: { DoctorId: doctor.id, status: "Closed" } }),
+        ChatRoom.count({
+          where: { DoctorId: doctor.id },
+          distinct: true,
+          col: "UserId",
+        }),
+      ]);
 
       res.status(200).json({
         doctor: {
