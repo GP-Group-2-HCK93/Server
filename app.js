@@ -44,6 +44,17 @@ io.on("connection", (socket) => {
     console.log(`🚪 ${socket.id} left chat:${chatRoomId}`);
   });
 
+  // ADDED: Typing indicator events
+  socket.on("typing:start", ({ chatRoomId, userName }) => {
+    if (!chatRoomId) return;
+    socket.to(`chat:${chatRoomId}`).emit("typing:started", { chatRoomId, userName });
+  });
+
+  socket.on("typing:stop", ({ chatRoomId }) => {
+    if (!chatRoomId) return;
+    socket.to(`chat:${chatRoomId}`).emit("typing:stopped", { chatRoomId });
+  });
+
   socket.on("disconnect", () => {
     console.log("❌ socket disconnected:", socket.id);
   });
