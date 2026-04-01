@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Admin",
+    "email": "admin@example.com",
+    "password": "admin123",
+    "role": "Admin",
+    "profilePic": null
+  },
+  {
+    "name": "Andi Pratama",
+    "email": "andi.pratama@example.com",
+    "password": "password123",
+    "role": "Doctor",
+    "profilePic": null
+  },
+  {
+    "name": "Siti Rahma",
+    "email": "siti.rahma@example.com",
+    "password": "password123",
+    "role": "Doctor",
+    "profilePic": null
+  },
+  {
+    "name": "Budi Santoso",
+    "email": "budi.santoso@example.com",
+    "password": "password123",
+    "role": "Doctor",
+    "profilePic": null
+  },
+  {
+    "name": "Rina Wijaya",
+    "email": "rina.wijaya@example.com",
+    "password": "password123",
+    "role": "Doctor",
+    "profilePic": null
+  },
+  {
+    "name": "Fajar Nugroho",
+    "email": "fajar.nugroho@example.com",
+    "password": "password123",
+    "role": "Doctor",
+    "profilePic": null
+  }
+]
