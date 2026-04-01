@@ -1,6 +1,7 @@
 const { User, Doctor } = require("../models/index");
 const { comparePassword } = require("../helpers/bcrypt");
 const { signToken } = require("../helpers/jwt");
+const cloudinary = require("../helpers/cloudinary");
 
 class AuthController {
   static async login(req, res, next) {
@@ -44,13 +45,22 @@ class AuthController {
 
   static async register(req, res, next) {
     try {
-      const { name, email, password, profilePic } = req.body;
+      const { name, email, password } = req.body;
+
+      let profilePic = null;
+
+      if (req.file) {
+        const base64Img = req.file.buffer.toString("base64");
+        const base64DataUrl = `data:${req.file.mimetype};base64,${base64Img}`;
+        const uploadedImage = await cloudinary.uploader.upload(base64DataUrl);
+        profilePic = uploadedImage.secure_url;
+      }
 
       const data = await User.create({
         name: name,
         email: email,
         password: password,
-        profilePic: profilePic
+        profilePic: profilePic,
       });
 
       res.status(201).json({
@@ -58,7 +68,7 @@ class AuthController {
         name: name,
         email: data.email,
         role: data.role,
-        profilePic: profilePic
+        profilePic: data.profilePic,
       });
     } catch (error) {
       next(error);
@@ -66,15 +76,24 @@ class AuthController {
   }
   static async docRegister(req, res, next) {
     try {
-      const { name, email, password, profilePic } = req.body;
+      const { name, email, password } = req.body;
       const { specialization, experience, bio, location } = req.body;
+
+      let profilePic = null;
+
+      if (req.file) {
+        const base64Img = req.file.buffer.toString("base64");
+        const base64DataUrl = `data:${req.file.mimetype};base64,${base64Img}`;
+        const uploadedImage = await cloudinary.uploader.upload(base64DataUrl);
+        profilePic = uploadedImage.secure_url;
+      }
 
       const newUser = await User.create({
         name: name,
         email: email,
         role: "Doctor",
         password: password,
-        profilePic: profilePic
+        profilePic: profilePic,
       });
 
       const newDoctor = await Doctor.create({
@@ -97,7 +116,7 @@ class AuthController {
         bio: newDoctor.bio,
         isAvailable: newDoctor.isAvailable,
         rating: newDoctor.rating,
-        location: newDoctor.location
+        location: newDoctor.location,
       });
     } catch (error) {
       next(error);
