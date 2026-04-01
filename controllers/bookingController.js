@@ -149,7 +149,7 @@ class BookingController {
         throw { name: "BadRequest", message: "Only closed booking can be rated" };
       }
 
-      const type = ChatController.ratingType(booking.DoctorId, booking.id);
+      const type = BookingController.ratingType(booking.DoctorId, booking.id);
       const existingRating = await Notification.findOne({
         where: {
           UserId,
@@ -158,20 +158,17 @@ class BookingController {
       });
 
       if (existingRating) {
-        await existingRating.update({
-          message: String(ratingValue),
-          isRead: true,
-        });
-      } else {
-        await Notification.create({
-          UserId,
-          type,
-          message: String(ratingValue),
-          isRead: false,
-        });
+        throw { name: "BadRequest", message: "You have already rated this booking" };
       }
 
-      const updatedAverage = await ChatController.updateDoctorRating(booking.DoctorId);
+      await Notification.create({
+        UserId,
+        type,
+        message: String(ratingValue),
+        isRead: false,
+      });
+
+      const updatedAverage = await BookingController.updateDoctorRating(booking.DoctorId);
 
       res.status(200).json({
         message: "Rating submitted",
