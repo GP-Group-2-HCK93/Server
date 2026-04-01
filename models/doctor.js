@@ -70,7 +70,7 @@ module.exports = (sequelize, DataTypes) => {
       rating: {
         type: DataTypes.FLOAT,
         allowNull: false,
-        defaultValue: 0,
+        defaultValue: 5,
         validate: {
           notEmpty: {
             msg: "Rating is required",

@@ -38,7 +38,7 @@ module.exports = {
       rating: {
         type: Sequelize.FLOAT,
         allowNull: false,
-        defaultValue: 0
+        defaultValue: 5
       },
       location: {
         type: Sequelize.STRING,
