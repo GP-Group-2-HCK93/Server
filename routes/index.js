@@ -10,9 +10,8 @@ const profileRoutes = require('./profile');
 
 router.use('/', authRoutes);
 
-router.use(authentication);
-router.use('/chats', chatRoutes);
-router.use('/ai', aiRoutes);
+router.use(authentication)
+router.use("/ai", aiRoutes)
 
 router.use('/doctors', doctorRoutes);
 router.use('/', chatRoutes);
