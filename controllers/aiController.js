@@ -303,21 +303,24 @@ ${JSON.stringify(
 
       const fallbackRecommendations = [...doctors]
         .map((doctor) => {
-          const searchable = [
-            doctor.specialization,
-            doctor.bio,
-            doctor.User?.name,
-            doctor.location,
-          ].join(" ");
+          const specialization = String(doctor.specialization || "").toLowerCase();
+          const bio = String(doctor.bio || "").toLowerCase();
 
-          const relevance = AIController.keywordScore(searchable, complaint);
-          const availabilityBoost = doctor.isAvailable ? 5 : 0;
-          const ratingBoost = Number(doctor.rating || 0);
-          const expBoost = Number(doctor.experience || 0) / 10;
+          // Calculate scores with clear priority:
+          // 1. Available (100 points) - highest priority
+          // 2. Specialization match (max 50 points)
+          // 3. Bio match (max 30 points)
+          const availabilityScore = doctor.isAvailable ? 100 : 0;
+          const specializationScore = AIController.keywordScore(specialization, complaint);
+          const bioScore = AIController.keywordScore(bio, complaint);
+
+          const finalScore = availabilityScore + 
+            Math.min(specializationScore * 5, 50) + 
+            Math.min(bioScore * 3, 30);
 
           return {
             doctor,
-            score: relevance + availabilityBoost + ratingBoost + expBoost,
+            score: finalScore,
           };
         })
         .sort((a, b) => b.score - a.score)
